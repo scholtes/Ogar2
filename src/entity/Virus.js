@@ -59,6 +59,10 @@ Virus.prototype.getEatingRange = function() {
 
 Virus.prototype.onConsume = function(consumer,gameServer) {
     var client = consumer.owner;
+
+    if(client.juggernaut) {
+        client.makeNotJuggernaut();
+    }
     
     var maxSplits = Math.floor(consumer.mass/16) - 1; // Maximum amount of splits
     var numSplits = gameServer.config.playerMaxCells - client.cells.length; // Get number of splits

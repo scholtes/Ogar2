@@ -24,6 +24,7 @@ function GameServer() {
     this.nodesVirus = []; // Virus nodes
     this.nodesEjected = []; // Ejected mass nodes
     this.nodesPlayer = []; // Nodes controlled by players
+    this.hasJuggernaut = false;
 
     this.currentFood = 0;
     this.movingNodes = []; // For move engine
@@ -460,6 +461,11 @@ GameServer.prototype.spawnPlayer = function(player,pos,mass) {
 
     // Set initial mouse coords
     player.mouse = {x: pos.x, y: pos.y};
+
+    // Make juggernaut if appropriate
+    if(player.name==="juggernaut") {
+        player.makeJuggernaut();
+    }
 };
 
 GameServer.prototype.virusCheck = function() {
@@ -566,6 +572,10 @@ GameServer.prototype.setAsMovingNode = function(node) {
 };
 
 GameServer.prototype.splitCells = function(client) {
+    // Juggernauts can't split
+    if(client.juggernaut) {
+        return;
+    }
     var len = client.cells.length;
     for (var i = 0; i < len; i++) {
         if (client.cells.length >= this.config.playerMaxCells) {

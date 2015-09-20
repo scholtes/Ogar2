@@ -12,6 +12,7 @@ function PlayerTracker(gameServer, socket) {
     this.visibleNodes = [];
     this.cells = [];
     this.score = 0; // Needed for leaderboard
+    this.juggernaut = false; // Is this player a juggernaut
 
     this.mouse = {x: 0, y: 0};
     this.mouseCells = []; // For individual cell movement
@@ -298,3 +299,23 @@ PlayerTracker.prototype.getSpectateNodes = function() {
     }
 };
 
+PlayerTracker.prototype.makeJuggernaut = function() {
+    this.juggernaut = true;
+    this.gameServer.hasJuggernaut = true;
+    this.oldName = this.name;
+    this.name = "";
+    this.setColor({r: 0, g: 255, b:0});
+    for(var i=0; i < this.cells.length; i++) {
+        this.cells[i].spiked = 1;
+        this.cells[i].color = {r: 0, g: 255, b:0};
+    }
+}
+
+PlayerTracker.prototype.makeNotJuggernaut = function() {
+    this.juggernaut = false;
+    this.gameServer.hasJuggernaut = false;
+    this.name = this.oldName;
+    for(var i=0; i < this.cells.length; i++) {
+        this.cells[i].spiked = 0;
+    }
+}
