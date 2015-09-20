@@ -6,6 +6,7 @@ function Virus() {
     this.cellType = 2;
     this.spiked = 1;
     this.fed = 0;
+    this.virusFeedAmount = null;
 }
 
 module.exports = Virus;
@@ -20,8 +21,9 @@ Virus.prototype.feed = function(feeder,gameServer) {
     gameServer.removeNode(feeder);
 
     // Check if the virus is going to explode
-    if (this.fed >= gameServer.config.virusFeedAmount) {
+    if (this.fed >= this.getVirusFeedAmount(gameServer)) {
         this.mass = gameServer.config.virusStartMass; // Reset mass
+        this.virusFeedAmount = null; // Forces feed amount for THIS virus to change
         this.fed = 0;
         gameServer.shootVirus(this);
     }
@@ -98,3 +100,19 @@ Virus.prototype.onRemove = function(gameServer) {
     }
 };
 
+// Private
+
+// Random integer between a and b inclusive
+Virus.prototype.getVirusFeedAmount = function(gameServer) {
+    if(this.virusFeedAmount === null) {
+        this.virusFeedAmount = Math.floor(
+                gameServer.config.virusMinFeedAmount
+                + Math.random()*(
+                gameServer.config.virusMaxFeedAmount
+                - gameServer.config.virusMinFeedAmount
+                + 1
+                )
+        );
+    }
+    return this.virusFeedAmount;
+};
