@@ -21,14 +21,32 @@ Virus.prototype.feed = function(feeder,gameServer) {
 
     // Check if the virus is going to explode
     if (this.fed >= this.getVirusFeedAmount(gameServer)) {
-        this.setAngle(feeder.getAngle()); // Set direction
+        var baseAngle = feeder.getAngle();
         this.mass = gameServer.config.virusStartMass; // Reset mass
         this.virusFeedAmount = null; // Forces feed amount for THIS virus to change
         this.backfires = Math.random() < gameServer
                 .config
                 .virusBackfireProbability; // True if this shoot will backfire, false otherwise
         this.fed = 0;
-        gameServer.shootVirus(this);
+
+        // Figure out how many new viruses to create
+        var denominator = 1.0;
+        var numNewVirus = 1;
+        for (var i = 0; i < gameServer.config.virusSplitNoProb.length-1; i++)  {
+            if (Math.random() < gameServer.config.virusSplitNoProb[i]/denominator) {
+                break;
+            }
+            numNewVirus++;
+            denominator -= gameServer.config.virusSplitNoProb[i];
+        }
+
+        // Now we can create the new viruses (with quantity numNewVirus)
+        var angleOffset = -0.5*gameServer.config.virusSpreadAngle*(numNewVirus-1);
+        for (i = 0; i < numNewVirus; i++) {
+            this.setAngle(baseAngle + angleOffset);
+            gameServer.shootVirus(this);
+            angleOffset += gameServer.config.virusSpreadAngle;
+        }
     }
 
 };
