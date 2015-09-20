@@ -67,6 +67,8 @@ function GameServer() {
         virusMinFeedAmount: 5, // Min mount of times you need to feed a virus to shoot it
         virusMaxFeedAmount: 10, // Max amount of times you need to feed a virus to shoot it
         virusBackfireProbability: 0.0666, // Probability that shooting a virus will backfire
+        virusSpreadAngle: 0.524, // Angle between viruses that are shot out (if more than 1 virus shot)
+        virusSplitNoProb: [0.75, 0.20, 0.05], // Probabilities of n viruses being shot (see config file for details)
         ejectMass: 12, // Mass of ejected cells
         ejectMassLoss: 16, // Mass lost when ejecting cells
         ejectSpeed: 160, // Base speed of ejected cells
