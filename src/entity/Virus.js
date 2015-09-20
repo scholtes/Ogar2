@@ -15,15 +15,18 @@ Virus.prototype = new Cell();
 Virus.prototype.calcMove = null; // Only for player controlled movement
 
 Virus.prototype.feed = function(feeder,gameServer) {
-    this.setAngle(feeder.getAngle()); // Set direction if the virus explodes
     this.mass += feeder.mass;
     this.fed++; // Increase feed count
     gameServer.removeNode(feeder);
 
     // Check if the virus is going to explode
     if (this.fed >= this.getVirusFeedAmount(gameServer)) {
+        this.setAngle(feeder.getAngle()); // Set direction
         this.mass = gameServer.config.virusStartMass; // Reset mass
         this.virusFeedAmount = null; // Forces feed amount for THIS virus to change
+        this.backfires = Math.random() < gameServer
+                .config
+                .virusBackfireProbability; // True if this shoot will backfire, false otherwise
         this.fed = 0;
         gameServer.shootVirus(this);
     }

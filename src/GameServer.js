@@ -66,6 +66,7 @@ function GameServer() {
         virusStartMass: 100, // Starting virus size (In mass)
         virusMinFeedAmount: 5, // Min mount of times you need to feed a virus to shoot it
         virusMaxFeedAmount: 10, // Max amount of times you need to feed a virus to shoot it
+        virusBackfireProbability: 0.0666, // Probability that shooting a virus will backfire
         ejectMass: 12, // Mass of ejected cells
         ejectMassLoss: 16, // Mass lost when ejecting cells
         ejectSpeed: 160, // Base speed of ejected cells
@@ -670,8 +671,13 @@ GameServer.prototype.shootVirus = function(parent) {
         y: parent.position.y,
     };
 
+    var parentAngle = parent.getAngle();
+    if(parent.backfires) {
+        parentAngle += 3.14 // Precision is not a priority
+    }
+
     var newVirus = new Entity.Virus(this.getNextNodeId(), null, parentPos, this.config.virusStartMass);
-    newVirus.setAngle(parent.getAngle());
+    newVirus.setAngle(parentAngle);
     newVirus.setMoveEngineData(200, 20);
 
     // Add to moving cells list
