@@ -132,6 +132,35 @@ PlayerCell.prototype.onAdd = function(gameServer) {
     gameServer.gameMode.onCellAdd(this);
 };
 
+PlayerCell.prototype.onAutoMove = function(gameServer) {
+    if (this.owner.cells.length == 2) {
+        // Check for viruses
+        var v = gameServer.getNearestVirus(this);
+        // Swap with virus if it exists
+        // +1 to avoid swapping when the cell is just
+        // barely larger than the virus (looks unnatural)
+        // This is not necessary, but looks nicer on the client
+        if (v && v.mass > this.mass+1) {
+            var thisAngle = this.getAngle();
+            v.setAngle(thisAngle+3.14);
+            v.setMoveEngineData(100,20);
+
+            // Move the player's other cell
+            // For loop just to avoid conditions
+            // where the other cell might be inaccessable
+            for(var i = 0; i < this.owner.cells.length; i++) {
+                this.owner.cells[i].setAngle(thisAngle);
+                this.owner.cells[i].setMoveEngineData(100,20);
+                gameServer.setAsMovingNode(this.owner.cells[i]);
+            }
+
+            gameServer.setAsMovingNode(v);
+            gameServer.removeNode(this);
+            return true;
+        }
+    }
+};
+
 PlayerCell.prototype.onRemove = function(gameServer) {
     var index;
     // Remove from player cell list
