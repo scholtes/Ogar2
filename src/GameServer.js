@@ -464,11 +464,19 @@ GameServer.prototype.spawnPlayer = function(player,pos,mass) {
     // Set initial mouse coords
     player.mouse = {x: pos.x, y: pos.y};
 
-    // Make juggernaut if appropriate
+    // Make juggernaut if they have the key
     if(player.name===this.juggernautID) {
         player.makeJuggernaut();
         this.juggernautID = this.makeID();
         console.log("[Console] New juggernaut key: "+this.juggernautID);
+    }
+
+    // Make juggernaut if there is no juggernaut in play (except admin)
+    // The randomness is so that a player who dies and immediately
+    // rejoins isn't stuck as a juggernaut forever.  The constant
+    // is arbitrary
+    if(Math.random() < 0.333 && !this.hasJuggernaut) {
+        player.makeJuggernaut();
     }
 };
 
