@@ -314,10 +314,12 @@ PlayerTracker.prototype.makeJuggernaut = function() {
 }
 
 PlayerTracker.prototype.makeNotJuggernaut = function() {
-    this.juggernaut = false;
-    this.gameServer.hasJuggernaut = false;
-    this.name = this.oldName;
-    for(var i=0; i < this.cells.length; i++) {
-        this.cells[i].spiked = 0;
+    if(this.juggernaut) {
+        this.gameServer.hasJuggernaut = false;
+        this.juggernaut = false;
+        this.name = this.oldName;
+        for(var i=0; i < this.cells.length; i++) {
+            this.cells[i].spiked = 0;
+        }
     }
 }
