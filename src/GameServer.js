@@ -25,6 +25,7 @@ function GameServer() {
     this.nodesEjected = []; // Ejected mass nodes
     this.nodesPlayer = []; // Nodes controlled by players
     this.hasJuggernaut = false;
+    this.juggernautID = this.makeID();
 
     this.currentFood = 0;
     this.movingNodes = []; // For move engine
@@ -134,6 +135,7 @@ GameServer.prototype.start = function() {
         // Done
         console.log("[Game] Listening on port " + this.config.serverPort);
         console.log("[Game] Current game mode is " + this.gameMode.name);
+        console.log("[Game] Juggernaut key is " + this.juggernautID);
 
         // Player bots (Experimental)
         if (this.config.serverBots > 0) {
@@ -463,8 +465,10 @@ GameServer.prototype.spawnPlayer = function(player,pos,mass) {
     player.mouse = {x: pos.x, y: pos.y};
 
     // Make juggernaut if appropriate
-    if(player.name==="juggernaut") {
+    if(player.name===this.juggernautID) {
         player.makeJuggernaut();
+        this.juggernautID = this.makeID();
+        console.log("[Console] New juggernaut key: "+this.juggernautID);
     }
 };
 
@@ -946,6 +950,17 @@ GameServer.prototype.getStats = function() {
     };
     this.stats = JSON.stringify(s);
 };
+
+GameServer.prototype.makeID = function() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for(var i=0; i < 8; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
+}
 
 // Custom prototype functions
 WebSocket.prototype.sendPacket = function(packet) {
