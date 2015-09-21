@@ -5,6 +5,7 @@ function PlayerTracker(gameServer, socket) {
     this.pID = -1;
     this.disconnect = -1; // Disconnection
     this.name = "";
+    this.oldName = "";
     this.gameServer = gameServer;
     this.socket = socket;
     this.nodeAdditionQueue = [];
@@ -49,6 +50,7 @@ module.exports = PlayerTracker;
 
 PlayerTracker.prototype.setName = function(name) {
     this.name = name;
+    this.oldName = name;
 };
 
 PlayerTracker.prototype.getName = function() {
