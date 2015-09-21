@@ -123,10 +123,11 @@ PlayerCell.prototype.getEatingRange = function() {
 };
 
 PlayerCell.prototype.onConsume = function(consumer,gameServer) {
+    var thisOwnerWasJuggernaut = this.owner.juggernaut;
     // Make this player no longer a juggernaut, or they will
     // have to reload the page to play as a normal cell
     this.owner.makeNotJuggernaut();
-    if(this.owner.juggernaut && consumer.juggernautable) {
+    if(thisOwnerWasJuggernaut && consumer.juggernautable) {
 
         consumer.addMass(-this.mass);
 
