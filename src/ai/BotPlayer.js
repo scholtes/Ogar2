@@ -114,7 +114,7 @@ BotPlayer.prototype.update = function() { // Overrides the update function from 
                 }
 
                 // Check for danger
-                if (cell.mass > (check.mass * 1.25)) {
+                if (cell.mass > (check.mass * 1.25) || this.juggernaut) {
                     // Add to prey list
                     this.prey.push(check);
                 } else if (check.mass > (cell.mass * 1.25)) {
