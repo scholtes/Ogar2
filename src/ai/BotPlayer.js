@@ -136,6 +136,14 @@ BotPlayer.prototype.update = function() { // Overrides the update function from 
                 break;
             case 2: // Virus
                 this.virus.push(check);
+                // Can also be a threat
+                if(cell.mass > (check.mass * 1.25)) {
+                    var dist = this.getDist(cell, check) - (r + check.getSize());
+                    if(dist < 50) {
+                        this.threats.push(check);
+                        this.predators.push(check);
+                    }
+                }
                 break;
             case 3: // Ejected mass
                 if (cell.mass > 20) {
@@ -190,10 +198,13 @@ BotPlayer.prototype.getState = function(cell) {
         if ((this.cells.length == 1) && (cell.mass > 180)) {
             var t = this.getBiggest(this.threats);
             var tl = this.findNearbyVirus(t,500,this.virus);
-            if (tl != false) {
+            if (tl != false && t.getType() !== 2) {
                 this.target = t;
                 this.targetVirus = tl;
                 return 4;
+            } else {
+                // Run if we hit a virus
+                return 2;
             }
         } else {
             // Run
