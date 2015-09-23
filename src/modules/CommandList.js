@@ -37,6 +37,7 @@ Commands.list = {
         console.log("[Console] exit       : stop the server");
         console.log("[Console] food       : spawn food at specified Location");
         console.log("[Console] gamemode   : change server gamemode");
+        console.log("[Console] juggernaut : set or view player's juggernautness");
         console.log("[Console] kick       : kick player or bot by client ID");
         console.log("[Console] kill       : kill cell(s) by client ID");
         console.log("[Console] killall    : kill everyone");
@@ -164,6 +165,41 @@ Commands.list = {
             console.log("[Game] Changed game mode to " + gameServer.gameMode.name);
         } catch (e) {
             console.log("[Console] Invalid game mode selected");
+        }
+    },
+    juggernaut: function(gameServer,split) {
+        // Validation checks
+        var id = parseInt(split[1]);
+        if (isNaN(id)) {
+            console.log("[Console] Please specify a valid player ID!");
+            return;
+        }
+
+        // Get player
+        var client;
+        for (var i in gameServer.clients) {
+            if (gameServer.clients[i].playerTracker.pID == id) {
+                client = gameServer.clients[i].playerTracker;
+                break;
+            }
+        }
+
+        if(client) {
+            if(split.length == 2) {
+                // tell if juggernaut
+                console.log("[Console] " + client.juggernaut);
+            } else if(split.length >= 2) {
+                var makeJugg = (split[2] === 'true');
+                if(makeJugg) {
+                    client.makeJuggernaut();
+                    console.log("[Console] Player " + id + " made juggernaut");
+                } else {
+                    client.makeNotJuggernaut();
+                    console.log("[Console] Player " + id + " made non-juggernaut");
+                }
+            }
+        } else {
+            console.log("[Console] No player with that ID!");
         }
     },
     kick: function(gameServer,split) {
