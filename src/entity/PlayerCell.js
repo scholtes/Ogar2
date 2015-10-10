@@ -98,19 +98,12 @@ PlayerCell.prototype.calcMove = function(x2, y2, gameServer) {
     
     gameServer.gameMode.onCellMove(x1,y1,this);
 
-    // Check to ensure we're not passing the world border
-    if (x1 < config.borderLeft) {
-        x1 = config.borderLeft;
-    }
-    if (x1 > config.borderRight) {
-        x1 = config.borderRight;
-    }
-    if (y1 < config.borderTop) {
-        y1 = config.borderTop;
-    }
-    if (y1 > config.borderBottom) {
-        y1 = config.borderBottom;
-    }
+    // Handle wall wrapping
+    var borderWidth = gameServer.config.borderRight - gameServer.config.borderLeft;
+    var borderHeight = gameServer.config.borderBottom - gameServer.config.borderTop;
+
+    x1 = (x1 + borderWidth) % borderWidth + gameServer.config.borderLeft;
+    y1 = (y1 + borderHeight) % borderHeight + gameServer.config.borderTop;
 
     this.position.x = x1 >> 0;
     this.position.y = y1 >> 0;

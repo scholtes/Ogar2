@@ -136,35 +136,21 @@ Cell.prototype.visibleCheck = function(box,centerPos) {
 
 Cell.prototype.calcMovePhys = function(config) {
     // Movement for ejected cells
-    var X = this.position.x + ( this.moveEngineSpeed * Math.sin(this.angle) );
-    var Y = this.position.y + ( this.moveEngineSpeed * Math.cos(this.angle) );
+    var X = this.position.x + ( this.moveEngineSpeed * Math.sin(this.angle) ) - config.borderLeft;
+    var Y = this.position.y + ( this.moveEngineSpeed * Math.cos(this.angle) ) - config.borderLeft;
 
+    var borderWidth = config.borderRight - config.borderLeft;
+    var borderHeight = config.borderBottom - config.borderTop;
+wwww
     // Movement engine
     this.moveEngineSpeed *= this.moveDecay; // Decaying speed
     this.moveEngineTicks--;
 
-    // Border check - Bouncy physics
-    var radius = 40;
-    if ((this.position.x - radius) < config.borderLeft) {
-        // Flip angle horizontally - Left side
-        this.angle = 6.28 - this.angle;
-        X = config.borderLeft + radius;
-    }
-    if ((this.position.x + radius) > config.borderRight) {
-        // Flip angle horizontally - Right side
-        this.angle = 6.28 - this.angle;
-        X = config.borderRight - radius;
-    }
-    if ((this.position.y - radius) < config.borderTop) {
-        // Flip angle vertically - Top side
-        this.angle = (this.angle <= 3.14) ? 3.14 - this.angle : 9.42 - this.angle;
-        Y = config.borderTop + radius;
-    }
-    if ((this.position.y + radius) > config.borderBottom) {
-        // Flip angle vertically - Bottom side
-        this.angle = (this.angle <= 3.14) ? 3.14 - this.angle : 9.42 - this.angle;
-        Y = config.borderBottom - radius;
-    }
+    // Border check - modular stuff
+    X = (X + borderWidth) % borderWidth + config.borderLeft;
+    Y = (Y + borderHeight) % borderHeight + config.borderTop;
+    console.log("[Cell]: "+X+", "+Y);
+
 
     // Set position
     this.position.x = X >> 0;
