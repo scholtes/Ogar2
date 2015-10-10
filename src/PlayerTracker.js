@@ -175,6 +175,10 @@ PlayerTracker.prototype.update = function() {
         // Player has disconnected... remove it when the timer hits -1
         this.disconnect--;
         if (this.disconnect == -1) {
+            // Release lock on juggernaut
+            if(this.juggernaut) {
+                this.makeNotJuggernaut();
+            }
             // Remove all client cells
             var len = this.cells.length;
             for (var i = 0; i < len; i++) {
