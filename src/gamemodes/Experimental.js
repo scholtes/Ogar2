@@ -88,20 +88,6 @@ Experimental.prototype.spawnMotherCell = function(gameServer) {
 Experimental.prototype.onServerInit = function(gameServer) {
     // Called when the server starts
     gameServer.run = true;
-    
-    // Special virus mechanics
-    Virus.prototype.feed = function(feeder,gameServer) {
-        gameServer.removeNode(feeder);
-        // Pushes the virus
-        this.setAngle(feeder.getAngle()); // Set direction if the virus explodes
-        this.moveEngineTicks = 5; // Amount of times to loop the movement function
-        this.moveEngineSpeed = 30;
-        
-        var index = gameServer.movingNodes.indexOf(this);
-        if (index == -1) {
-            gameServer.movingNodes.push(this);
-        }
-    };
 
     // Override this
     gameServer.getRandomSpawn = gameServer.getRandomPosition;
@@ -192,6 +178,10 @@ MotherCell.prototype.checkEat = function(gameServer) {
             var dist = Math.sqrt( xs + ys );
             
             if (r > dist) {
+                // Un-juggernaut if player was juggernaut
+                if(check.owner.juggernaut) {
+                    check.owner.makeNotJuggernaut();
+                }
                 // Eats the cell
                 gameServer.removeNode(check);
                 this.mass += check.mass;
