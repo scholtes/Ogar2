@@ -18,6 +18,7 @@ function Experimental() {
     
     // Config
     this.motherCellMass = 200;
+    this.motherCellMaxMass = 400;
     this.motherUpdateInterval = 5; // How many ticks it takes to update the mother cell (1 tick = 50 ms)
     this.motherSpawnInterval = 100; // How many ticks it takes to spawn another mother cell - Currently 5 seconds
     this.motherMinAmount = 5;
@@ -202,6 +203,17 @@ MotherCell.prototype.checkEat = function(gameServer) {
             // Eat the cell
             gameServer.removeNode(check);
             this.mass += check.mass;
+        }
+    }
+
+    // Don't let mother cells get too big.  They'll just be a black hole instead
+    if(this.mass > gameServer.gameMode.motherCellMaxMass) {
+        this.mass = gameServer.gameMode.motherCellMaxMass;
+        // Spit out a virus if not too many viruses
+        if(gameServer.nodesVirus.length < gameServer.config.virusMaxAmount) {
+            this.setAngle(Math.random() * 6.28);
+            gameServer.shootVirus(this);
+            this.mass -= gameServer.config.virusStartMass;
         }
     }
 }
