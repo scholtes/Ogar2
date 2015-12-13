@@ -199,7 +199,7 @@ PlayerCell.prototype.onAutoMove = function(gameServer) {
         // +1 to avoid swapping when the cell is just
         // barely larger than the virus (looks unnatural)
         // This is not necessary, but looks nicer on the client
-        if (v && v.mass > this.mass+1) {
+        if (v && v.mass > this.mass+1 && v.moveEngineTicks === 0) {
             var thisAngle = this.getAngle();
             v.setAngle(thisAngle+3.14);
             v.setMoveEngineData(100,20);

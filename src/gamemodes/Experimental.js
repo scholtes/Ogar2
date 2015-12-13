@@ -3,6 +3,7 @@ var Cell = require('../entity/Cell');
 var Food = require('../entity/Food');
 var Virus = require('../entity/Virus');
 var VirusFeed = require('../entity/Virus').prototype.feed;
+var MovingVirus = require('../entity/MovingVirus.js')
 
 function Experimental() {
     FFA.apply(this, Array.prototype.slice.call(arguments));
@@ -13,6 +14,7 @@ function Experimental() {
     
     // Gamemode Specific Variables
     this.nodesMother = [];
+    this.movingVirusCount = 0;
     this.tickMother = 0; 
     this.tickMotherS = 0;
     
@@ -22,6 +24,8 @@ function Experimental() {
     this.motherUpdateInterval = 5; // How many ticks it takes to update the mother cell (1 tick = 50 ms)
     this.motherSpawnInterval = 100; // How many ticks it takes to spawn another mother cell - Currently 5 seconds
     this.motherMinAmount = 5;
+    this.movingVirusMass = 100;
+    this.movingVirusMinAmount = 10;
 }
 
 module.exports = Experimental;
@@ -84,6 +88,56 @@ Experimental.prototype.spawnMotherCell = function(gameServer) {
     }
 };
 
+Experimental.prototype.spawnMovingVirus = function(gameServer) {
+    // Checks if there are enough mother cells on the map
+    if (this.movingVirusCount < this.movingVirusMinAmount) {
+        // Spawns a mother cell
+        var pos =  gameServer.getRandomPosition();
+
+        // Check for players
+        for (var i = 0; i < gameServer.nodesPlayer.length; i++) {
+            var check = gameServer.nodesPlayer[i];
+
+            var r = check.getSize(); // Radius of checking player cell
+
+            // Collision box
+            var topY = check.position.y - r;
+            var bottomY = check.position.y + r;
+            var leftX = check.position.x - r;
+            var rightX = check.position.x + r;
+
+            // Check for collisions
+            if (pos.y > bottomY) {
+                continue;
+            }
+
+            if (pos.y < topY) {
+                continue;
+            }
+
+            if (pos.x > rightX) {
+                continue;
+            }
+
+            if (pos.x < leftX) {
+                continue;
+            }
+
+            // Collided
+            return;
+        }
+
+        // Spawn if no cells are colliding
+        var m = new MovingVirus(gameServer.getNextNodeId(),
+                                null,
+                                pos,
+                                this.movingVirusMass + Math.floor(50*Math.random())
+        );
+        gameServer.movingNodes.push(m);
+        gameServer.addNode(m); 
+    }
+};
+
 // Override
 
 Experimental.prototype.onServerInit = function(gameServer) {
@@ -95,7 +149,7 @@ Experimental.prototype.onServerInit = function(gameServer) {
 };
 
 Experimental.prototype.onTick = function(gameServer) {
-    // Mother Cell updates
+    // Mother Cell updates and MovingVirus updates
     if (this.tickMother >= this.motherUpdateInterval) {
     	this.updateMotherCells(gameServer);
     	this.tickMother = 0;
@@ -106,6 +160,7 @@ Experimental.prototype.onTick = function(gameServer) {
     // Mother Cell Spawning
     if (this.tickMotherS >= this.motherSpawnInterval) {
     	this.spawnMotherCell(gameServer);
+        this.spawnMovingVirus(gameServer);
     	this.tickMotherS = 0;
     } else {
     	this.tickMotherS++;
