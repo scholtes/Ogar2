@@ -616,13 +616,13 @@ GameServer.prototype.splitCells = function(client) {
             y: cell.position.y + ( size * Math.cos(angle) )
         };
         // Calculate mass and speed of splitting cell
-        var splitSpeed = cell.getSpeed() * 6;
+        var splitSpeed = cell.getSpeed() * 2;
         var newMass = cell.mass / 2;
         cell.mass = newMass;
         // Create cell
         var split = new Entity.PlayerCell(this.getNextNodeId(), client, startPos, newMass);
         split.setAngle(angle);
-        split.setMoveEngineData(splitSpeed, 32, 0.85); 
+        split.setMoveEngineData(splitSpeed, 52, 0.95); 
         split.calcMergeTime(this.config.playerRecombineTime);
 
         // Add to moving cells list
