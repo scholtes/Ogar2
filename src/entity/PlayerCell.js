@@ -179,7 +179,9 @@ PlayerCell.prototype.onConsume = function(consumer,gameServer) {
         consumer.calcMergeTime(gameServer.config.playerRecombineTime);
 
     } else {
-        consumer.addMass(this.mass);
+        // Add a 20% inefficiency for eating cells (but not for merging)
+        var factor = ( consumer.owner === this.owner ? 1 : 0.8 );
+        consumer.addMass(factor * this.mass);
     }
 };
 
