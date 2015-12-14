@@ -1,7 +1,10 @@
 function Cell(nodeId, owner, position, mass, gameServer) {
     this.nodeId = nodeId;
     this.owner = owner; // playerTracker that owns this cell
-    this.color = {r: 0, g: 255, b: 0};
+    this.color = {r: Math.floor(32*Math.random()),
+                  g: 196 + Math.floor(48*Math.random()),
+                  b: Math.floor(32*Math.random())
+    };
     this.position = position;
     this.mass = mass; // Starting mass of the cell
     this.cellType = -1; // 0 = Player Cell, 1 = Food, 2 = Virus, 3 = Ejected Mass

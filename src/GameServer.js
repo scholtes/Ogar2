@@ -628,6 +628,19 @@ GameServer.prototype.splitCells = function(client) {
         // Add to moving cells list
         this.setAsMovingNode(split);
         this.addNode(split);
+
+        // Slightly randomize color (formulated to stay in 0 - 255)
+        split.color.r += Math.floor(16*Math.random()) - 8;
+        split.color.g += Math.floor(16*Math.random()) - 8;
+        split.color.b += Math.floor(16*Math.random()) - 8;
+
+        if(split.color.r < 0) { split.color.r = 0; }
+        if(split.color.g < 0) { split.color.g = 0; }
+        if(split.color.b < 0) { split.color.b = 0; }
+
+        if(split.color.r > 255) { split.color.r = 255; }
+        if(split.color.g > 255) { split.color.g = 255; }
+        if(split.color.b > 255) { split.color.b = 255; }
     }
 };
 

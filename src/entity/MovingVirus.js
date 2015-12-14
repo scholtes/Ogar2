@@ -4,9 +4,9 @@ function MovingVirus() {
     Virus.apply(this, Array.prototype.slice.call(arguments));
 
     this.color = {
-        r: 112 + Math.floor(32*Math.random()),
+        r: 104 + Math.floor(48*Math.random()),
         g: 0,
-        b: 48 + Math.floor(32*Math.random())
+        b: 40 + Math.floor(48*Math.random())
     };
     this.angle = 3.14*Math.random();
     this.setMoveEngineData(2+4*Math.random(), Infinity, 1);
