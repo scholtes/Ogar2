@@ -58,7 +58,7 @@ UpdateNodes.prototype.build = function() {
         view.setUint8(offset + 14, node.color.r, true); // Color (R)
         view.setUint8(offset + 15, node.color.g, true); // Color (G)
         view.setUint8(offset + 16, node.color.b, true); // Color (B)
-        view.setUint8(offset + 17, node.spiked, true); // Flags
+        view.setUint8(offset + 17, node.spiked | (node.agitated << 4), true); // Flags
         offset += 18;
 
         var name = node.getName();
