@@ -322,10 +322,16 @@ PlayerTracker.prototype.makeJuggernaut = function() {
     this.gameServer.hasJuggernaut = true;
     this.oldName = this.name;
     this.name = "";
-    this.setColor({r: 0, g: 255, b:0});
+
+    var color = {
+        r: 104 + Math.floor(48*Math.random()),
+        g: 0,
+        b: 40 + Math.floor(48*Math.random())
+    };
+    this.setColor(color);
     for(var i=0; i < this.cells.length; i++) {
         this.cells[i].spiked = 1;
-        this.cells[i].color = {r: 0, g: 255, b:0};
+        this.cells[i].color = color;
     }
 }
 
