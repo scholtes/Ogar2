@@ -32,7 +32,7 @@ function Experimental() {
     this.movingVirusMinAmount = 10;
 
     this.stickyMass = 75;
-    this.stickyMinAmount = 2;
+    this.stickyMinAmount = 3;
     this.stickyUpdateInterval = 1;
     this.tickSticky = 0;
 }

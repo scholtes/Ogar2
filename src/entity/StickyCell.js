@@ -1,4 +1,5 @@
 var Cell = require('./Cell');
+var Virus = require('./Virus');
 var MotherCell = require('./MotherCell');
 
 function StickyCell() {
@@ -63,7 +64,6 @@ StickyCell.prototype.update = function(gameServer) {
             // Acquire victim cell if no victim acquired
             this.acquired = check;
         } else if(check != this.acquired &&
-                  check.juggernautable &&
                   check.mass > this.acquired.mass) {
             // Acquire new victim, if their mass is greater than current victims mass
             this.acquired = check;
@@ -76,12 +76,18 @@ StickyCell.prototype.onAdd = function(gameServer) {
 };
 
 StickyCell.prototype.onConsume = function(consumer, gameServer) {
+    // Explode
+    this.virusOnConsume(consumer, gameServer);
+
+    // LOSE mass if it is attached to us, gain otherwise
+    // (subtract twice because virusOnConsume already adds mass)
     if(this.acquired && consumer.owner == this.acquired.owner) {
-        consumer.mass -= this.mass;
-    } else {
-        consumer.mass += this.mass;
+        consumer.mass -= 2*this.mass;
+        if(consumer.mass < 10) { consumer.mass = 10; }
     }
 }
+
+StickyCell.prototype.virusOnConsume = Virus.prototype.onConsume;
 
 StickyCell.prototype.onRemove = function(gameServer) {
     var index = gameServer.gameMode.nodesSticky.indexOf(this);
