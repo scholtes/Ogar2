@@ -20,6 +20,7 @@ function GameServer() {
     this.lastNodeId = 1;
     this.lastPlayerId = 1;
     this.clients = [];
+    this.ipCounts = {};
     this.nodes = [];
     this.nodesVirus = []; // Virus nodes
     this.nodesEjected = []; // Ejected mass nodes
@@ -190,14 +191,16 @@ GameServer.prototype.start = function() {
         // -----/Client authenticity check code -----
 
         // ----------- Client IP limiting -----------
-        var countIP = 0;
-        for(var i in this.clients) {
-            if(this.clients[i].remoteAddress == ws._socket.remoteAddress) { countIP++; }
-        }
-        if(countIP >= this.config.serverMaxIPConnections) {
-            console.log("IP limit reached for " + ws._socket.remoteAddress);
+        // Check if we're past the limit for this IP
+        if(this.ipCounts[ws._socket.remoteAddress] >= this.config.serverMaxIPConnections) {
             ws.close();
             return;
+        }
+        // Increment the count for this IP
+        if(this.ipCounts[ws._socket.remoteAddress]) {
+            this.ipCounts[ws._socket.remoteAddress]++;
+        } else {
+            this.ipCounts[ws._socket.remoteAddress] = 1;
         }
         // -----------/Client IP limiting -----------
 

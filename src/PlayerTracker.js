@@ -203,6 +203,12 @@ PlayerTracker.prototype.update = function() {
             // Remove from client list
             var index = this.gameServer.clients.indexOf(this.socket);
             if (index != -1) {
+                // First decrement the IP counter
+                this.gameServer.ipCounts[this.socket.remoteAddress]--;
+                if(this.gameServer.ipCounts[this.socket.remoteAddress] < 1) {
+                    delete this.gameServer.ipCounts[this.socket.remoteAddress];
+                }
+                // Now remove the client
                 this.gameServer.clients.splice(index,1);
             }
         }
