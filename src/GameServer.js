@@ -46,6 +46,7 @@ function GameServer() {
     // Config
     this.config = { // Border - Right: X increases, Down: Y increases (as of 2015-05-20)
         serverMaxConnections: 64, // Maximum amount of connections to the server.
+        serverMaxIPConnections: 10, // Maximum ammount of connections from one IP address
         serverPort: 443, // Server port
         serverGamemode: 0, // Gamemode, 0 = FFA, 1 = Teams
         serverBots: 0, // Amount of player bots to spawn
@@ -187,6 +188,18 @@ GameServer.prototype.start = function() {
             return;
         }
         // -----/Client authenticity check code -----
+
+        // ----------- Client IP limiting -----------
+        var countIP = 0;
+        for(var i in this.clients) {
+            if(this.clients[i].remoteAddress == ws._socket.remoteAddress) { countIP++; }
+        }
+        if(countIP >= this.config.serverMaxIPConnections) {
+            console.log("IP limit reached for " + ws._socket.remoteAddress);
+            ws.close();
+            return;
+        }
+        // -----------/Client IP limiting -----------
 
         function close(error) {
             // Log disconnections
