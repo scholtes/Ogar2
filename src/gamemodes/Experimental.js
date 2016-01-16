@@ -6,6 +6,7 @@ var VirusFeed = require('../entity/Virus').prototype.feed;
 var MotherCell = require('../entity/MotherCell');
 var MovingVirus = require('../entity/MovingVirus');
 var StickyCell = require('../entity/StickyCell');
+var Beacon = require('../entity/Beacon');
 
 function Experimental() {
     FFA.apply(this, Array.prototype.slice.call(arguments));
@@ -35,6 +36,8 @@ function Experimental() {
     this.stickyMinAmount = 3;
     this.stickyUpdateInterval = 1;
     this.tickSticky = 0;
+
+    this.beaconMass = 500;
 }
 
 module.exports = Experimental;
@@ -212,6 +215,15 @@ Experimental.prototype.onServerInit = function(gameServer) {
 };
 
 Experimental.prototype.onTick = function(gameServer) {
+    // Create a beacon if one doesn't exist
+    if(!this.beacon) {
+        this.beacon = new Beacon(gameServer.getNextNodeId(),
+                                 null,
+                                 gameServer.getRandomPosition(),
+                                 this.beaconMass);
+        gameServer.addNode(this.beacon);
+    }
+
     // Mother Cell updates and MovingVirus updates
     if (this.tickMother >= this.motherUpdateInterval) {
     	this.updateMotherCells(gameServer);

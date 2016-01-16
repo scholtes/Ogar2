@@ -45,6 +45,17 @@ EjectedMass.prototype.onConsume = function(consumer,gameServer) {
 };
 
 EjectedMass.prototype.onAutoMove = function(gameServer) {
+    // Check for a beacon if experimental
+    var beacon = gameServer.gameMode.beacon;
+    if (gameServer.gameMode.ID === 2
+        && beacon
+        && this.collisionCheck2(
+            beacon.getSquareSize(), beacon.position
+        )) {
+        // The beacon has been feed
+        beacon.feed(this, gameServer);
+        return true;
+    }
     if (gameServer.nodesVirus.length < gameServer.config.virusMaxAmount) {
         // Check for viruses
         var v = gameServer.getNearestVirus(this);
