@@ -38,15 +38,17 @@ Beacon.prototype.feed = function(feeder, gameServer) {
     }
 
     // Even more rarely spit out a moving virus
-    if(Math.random() < 0.05) {
+    // Spit out a moving virus in deterministic direction
+    // every 20 shots
+    if(this.stage % 20 === 0) {
         var moving = new MovingVirus(
             gameServer.getNextNodeId(),
             null,
             {x: this.position.x, y: this.position.y},
             125 // mass
         );
-        moving.angle = 6.28*Math.random();
-        moving.setMoveEngineData(10+10*Math.random(), Infinity, 1);
+        moving.angle = feeder.angle;
+        moving.setMoveEngineData(20+10*Math.random(), Infinity, 1);
         gameServer.movingNodes.push(moving);
         gameServer.addNode(moving);
     }
