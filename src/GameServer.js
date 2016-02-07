@@ -640,6 +640,7 @@ GameServer.prototype.splitCells = function(client) {
         split.setAngle(angle);
         split.setMoveEngineData(splitSpeed, 52, 0.95); 
         split.calcMergeTime(this.config.playerRecombineTime);
+        split.juggernautable = false;
 
         // Add to moving cells list
         this.setAsMovingNode(split);
