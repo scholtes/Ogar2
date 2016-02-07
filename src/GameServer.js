@@ -716,6 +716,19 @@ GameServer.prototype.newCellVirused = function(client, parent, angle, mass, spee
     // Add to moving cells list
     this.addNode(newCell);
     this.setAsMovingNode(newCell);
+
+    // Then slightly randomize its color
+    newCell.color.r += Math.floor(32*Math.random()) - 16;
+    newCell.color.g += Math.floor(32*Math.random()) - 16;
+    newCell.color.b += Math.floor(32*Math.random()) - 16;
+
+    if(newCell.color.r < 0) { newCell.color.r = 0; }
+    if(newCell.color.g < 0) { newCell.color.g = 0; }
+    if(newCell.color.b < 0) { newCell.color.b = 0; }
+
+    if(newCell.color.r > 255) { newCell.color.r = 255; }
+    if(newCell.color.g > 255) { newCell.color.g = 255; }
+    if(newCell.color.b > 255) { newCell.color.b = 255; }
 };
 
 GameServer.prototype.shootVirus = function(parent) {
