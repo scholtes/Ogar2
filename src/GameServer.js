@@ -646,9 +646,9 @@ GameServer.prototype.splitCells = function(client) {
         this.addNode(split);
 
         // Slightly randomize color (formulated to stay in 0 - 255)
-        split.color.r += Math.floor(16*Math.random()) - 8;
-        split.color.g += Math.floor(16*Math.random()) - 8;
-        split.color.b += Math.floor(16*Math.random()) - 8;
+        split.color.r += Math.floor(32*Math.random()) - 16;
+        split.color.g += Math.floor(32*Math.random()) - 16;
+        split.color.b += Math.floor(32*Math.random()) - 16;
 
         if(split.color.r < 0) { split.color.r = 0; }
         if(split.color.g < 0) { split.color.g = 0; }
