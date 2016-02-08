@@ -15,7 +15,10 @@ function PlayerTracker(gameServer, socket) {
     this.score = 0; // Needed for leaderboard
     this.juggernaut = false; // Is this player a juggernaut
 
-    this.mouse = {x: 0, y: 0};
+    this.mouse = {
+        x: 0,
+        y: 0
+    };
     this.mouseCells = []; // For individual cell movement
     this.tickLeaderboard = 0; //
     this.tickViewBox = 0;
@@ -27,7 +30,10 @@ function PlayerTracker(gameServer, socket) {
     // Viewing box
     this.sightRangeX = 0;
     this.sightRangeY = 0;
-    this.centerPos = {x: 3000, y: 3000 };
+    this.centerPos = {
+        x: 3000,
+        y: 3000
+    };
     this.viewBox = {
         topY: 0,
         bottomY: 0,
@@ -38,8 +44,8 @@ function PlayerTracker(gameServer, socket) {
     };
 
     // Scramble the coordinates for anti-raga
-    this.scrambleX = Math.floor((1<<15)*Math.random());
-    this.scrambleY = Math.floor((1<<15)*Math.random());
+    this.scrambleX = Math.floor((1 << 15) * Math.random());
+    this.scrambleY = Math.floor((1 << 15) * Math.random());
 
     // Gamemode function
     if (gameServer) {
@@ -85,37 +91,37 @@ PlayerTracker.prototype.getTeam = function() {
 // Functions
 
 PlayerTracker.prototype.update = function() {
-// Actions buffer (So that people cant spam packets)
+    // Actions buffer (So that people cant spam packets)
     if (this.socket.packetHandler.pressSpace) { // Split cell
-        this.gameServer.gameMode.pressSpace(this.gameServer,this);
+        this.gameServer.gameMode.pressSpace(this.gameServer, this);
         this.socket.packetHandler.pressSpace = false;
     }
 
     if (this.socket.packetHandler.pressW) { // Eject mass
-        this.gameServer.gameMode.pressW(this.gameServer,this);
+        this.gameServer.gameMode.pressW(this.gameServer, this);
         this.socket.packetHandler.pressW = false;
     }
 
     if (this.socket.packetHandler.pressQ) { // Q Press
-        this.gameServer.gameMode.pressQ(this.gameServer,this);
+        this.gameServer.gameMode.pressQ(this.gameServer, this);
         this.socket.packetHandler.pressQ = false;
     }
-    
+
     var updateNodes = []; // Nodes that need to be updated via packet
-    
+
     // Remove nodes from visible nodes if possible
     var d = 0;
     while (d < this.nodeDestroyQueue.length) {
-    	var index = this.visibleNodes.indexOf(this.nodeDestroyQueue[d]);
+        var index = this.visibleNodes.indexOf(this.nodeDestroyQueue[d]);
         if (index > -1) {
             this.visibleNodes.splice(index, 1);
             d++; // Increment
         } else {
             // Node was never visible anyways
-            this.nodeDestroyQueue.splice(d,1);
+            this.nodeDestroyQueue.splice(d, 1);
         }
     }
-    
+
     // Get visible nodes every 400 ms
     var nonVisibleNodes = []; // Nodes that are not visible
     if (this.tickViewBox <= 0) {
@@ -129,7 +135,7 @@ PlayerTracker.prototype.update = function() {
                 nonVisibleNodes.push(this.visibleNodes[i]);
             }
         }
-        
+
         // Add nodes to client's screen if client has not seen it already
         for (var i = 0; i < newVisible.length; i++) {
             var index = this.visibleNodes.indexOf(newVisible[i]);
@@ -137,7 +143,7 @@ PlayerTracker.prototype.update = function() {
                 updateNodes.push(newVisible[i]);
             }
         }
-        
+
         this.visibleNodes = newVisible;
         // Reset Ticks
         this.tickViewBox = 2;
@@ -150,7 +156,7 @@ PlayerTracker.prototype.update = function() {
             updateNodes.push(node);
         }
     }
-    
+
     // Update moving nodes
     for (var i = 0; i < this.visibleNodes.length; i++) {
         var node = this.visibleNodes[i];
@@ -162,10 +168,10 @@ PlayerTracker.prototype.update = function() {
 
     // Send packet
     this.socket.sendPacket(new Packet.UpdateNodes(this.nodeDestroyQueue,
-                                                  updateNodes,
-                                                  nonVisibleNodes,
-                                                  this.scrambleX,
-                                                  this.scrambleY
+        updateNodes,
+        nonVisibleNodes,
+        this.scrambleX,
+        this.scrambleY
     ));
 
     this.nodeDestroyQueue = []; // Reset destroy queue
@@ -185,7 +191,7 @@ PlayerTracker.prototype.update = function() {
         this.disconnect--;
         if (this.disconnect == -1) {
             // Release lock on juggernaut
-            if(this.juggernaut) {
+            if (this.juggernaut) {
                 this.makeNotJuggernaut();
             }
             // Remove all client cells
@@ -205,11 +211,11 @@ PlayerTracker.prototype.update = function() {
             if (index != -1) {
                 // First decrement the IP counter
                 this.gameServer.ipCounts[this.socket.remoteAddress]--;
-                if(this.gameServer.ipCounts[this.socket.remoteAddress] < 1) {
+                if (this.gameServer.ipCounts[this.socket.remoteAddress] < 1) {
                     delete this.gameServer.ipCounts[this.socket.remoteAddress];
                 }
                 // Now remove the client
-                this.gameServer.clients.splice(index,1);
+                this.gameServer.clients.splice(index, 1);
             }
         }
     }
@@ -221,14 +227,14 @@ PlayerTracker.prototype.updateSightRange = function() { // For view distance
     var totalSize = 1.0;
     var len = this.cells.length;
 
-    for (var i = 0; i < len;i++) {
+    for (var i = 0; i < len; i++) {
         if (!this.cells[i]) {
             continue;
         }
 
         totalSize += this.cells[i].getSize();
     }
-	
+
     var factor = Math.pow(Math.min(64.0 / totalSize, 1), 0.4);
     this.sightRangeX = this.gameServer.config.serverViewBaseX / factor;
     this.sightRangeY = this.gameServer.config.serverViewBaseY / factor;
@@ -243,7 +249,7 @@ PlayerTracker.prototype.updateCenter = function() { // Get center of cells
 
     var X = 0;
     var Y = 0;
-    for (var i = 0; i < len ;i++) {
+    for (var i = 0; i < len; i++) {
         if (!this.cells[i]) {
             continue;
         }
@@ -275,14 +281,14 @@ PlayerTracker.prototype.calcViewBox = function() {
     this.viewBox.height = this.sightRangeY;
 
     var newVisible = [];
-    for (var i = 0; i < this.gameServer.nodes.length ;i++) {
+    for (var i = 0; i < this.gameServer.nodes.length; i++) {
         node = this.gameServer.nodes[i];
 
         if (!node) {
             continue;
         }
 
-        if (node.visibleCheck(this.viewBox,this.centerPos)) {
+        if (node.visibleCheck(this.viewBox, this.centerPos)) {
             // Cell is in range of viewBox
             newVisible.push(node);
         }
@@ -313,11 +319,11 @@ PlayerTracker.prototype.getSpectateNodes = function() {
         specZoom = Math.pow(Math.min(40.5 / specZoom, 1.0), 0.4) * 0.6;
         // TODO: Send packet elsewhere so it is send more often
         this.socket.sendPacket(new Packet.UpdatePosition(specPlayer.centerPos.x + this.scrambleX,
-                                                         specPlayer.centerPos.y + this.scrambleY,
-                                                         specZoom
+            specPlayer.centerPos.y + this.scrambleY,
+            specZoom
         ));
         // TODO: Recalculate visible nodes for spectator to match specZoom
-        return specPlayer.visibleNodes.slice(0,specPlayer.visibleNodes.length);
+        return specPlayer.visibleNodes.slice(0, specPlayer.visibleNodes.length);
     } else {
         return []; // Nothing
     }
@@ -330,23 +336,23 @@ PlayerTracker.prototype.makeJuggernaut = function() {
     this.name = "";
 
     var color = {
-        r: 104 + Math.floor(48*Math.random()),
+        r: 104 + Math.floor(48 * Math.random()),
         g: 0,
-        b: 40 + Math.floor(48*Math.random())
+        b: 40 + Math.floor(48 * Math.random())
     };
     this.setColor(color);
-    for(var i=0; i < this.cells.length; i++) {
+    for (var i = 0; i < this.cells.length; i++) {
         this.cells[i].spiked = 1;
         this.cells[i].color = color;
     }
 }
 
 PlayerTracker.prototype.makeNotJuggernaut = function() {
-    if(this.juggernaut) {
+    if (this.juggernaut) {
         this.gameServer.hasJuggernaut = false;
         this.juggernaut = false;
         this.name = this.oldName;
-        for(var i=0; i < this.cells.length; i++) {
+        for (var i = 0; i < this.cells.length; i++) {
             this.cells[i].spiked = 0;
         }
     }
