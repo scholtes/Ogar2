@@ -15,7 +15,7 @@ Food.prototype.getSize = function() {
     return this.size;
 };
 
-Food.prototype.getSquareSize = function () {
+Food.prototype.getSquareSize = function() {
     return this.squareSize;
 };
 
@@ -35,7 +35,6 @@ Food.prototype.onRemove = function(gameServer) {
     gameServer.currentFood--;
 };
 
-Food.prototype.onConsume = function(consumer,gameServer) {
+Food.prototype.onConsume = function(consumer, gameServer) {
     consumer.addMass(this.mass);
 };
-

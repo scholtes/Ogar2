@@ -14,7 +14,7 @@ Virus.prototype = new Cell();
 
 Virus.prototype.calcMove = null; // Only for player controlled movement
 
-Virus.prototype.feed = function(feeder,gameServer) {
+Virus.prototype.feed = function(feeder, gameServer) {
     this.mass += feeder.mass;
     this.fed++; // Increase feed count
     gameServer.removeNode(feeder);
@@ -25,15 +25,15 @@ Virus.prototype.feed = function(feeder,gameServer) {
         this.mass = gameServer.config.virusStartMass; // Reset mass
         this.virusFeedAmount = null; // Forces feed amount for THIS virus to change
         this.backfires = Math.random() < gameServer
-                .config
-                .virusBackfireProbability; // True if this shoot will backfire, false otherwise
+            .config
+            .virusBackfireProbability; // True if this shoot will backfire, false otherwise
         this.fed = 0;
 
         // Figure out how many new viruses to create
         var denominator = 1.0;
         var numNewVirus = 1;
-        for (var i = 0; i < gameServer.config.virusSplitNoProb.length-1; i++)  {
-            if (Math.random() < gameServer.config.virusSplitNoProb[i]/denominator) {
+        for (var i = 0; i < gameServer.config.virusSplitNoProb.length - 1; i++) {
+            if (Math.random() < gameServer.config.virusSplitNoProb[i] / denominator) {
                 break;
             }
             numNewVirus++;
@@ -41,7 +41,7 @@ Virus.prototype.feed = function(feeder,gameServer) {
         }
 
         // Now we can create the new viruses (with quantity numNewVirus)
-        var angleOffset = -0.5*gameServer.config.virusSpreadAngle*(numNewVirus-1);
+        var angleOffset = -0.5 * gameServer.config.virusSpreadAngle * (numNewVirus - 1);
         for (i = 0; i < numNewVirus; i++) {
             this.setAngle(baseAngle + angleOffset);
             gameServer.shootVirus(this);
@@ -57,17 +57,17 @@ Virus.prototype.getEatingRange = function() {
     return this.getSize() * .4; // 0 for ejected cells
 };
 
-Virus.prototype.onConsume = function(consumer,gameServer) {
+Virus.prototype.onConsume = function(consumer, gameServer) {
     var client = consumer.owner;
 
-    if(client.juggernaut) {
+    if (client.juggernaut) {
         client.makeNotJuggernaut();
     }
-    
-    var maxSplits = Math.floor(consumer.mass/16) - 1; // Maximum amount of splits
+
+    var maxSplits = Math.floor(consumer.mass / 16) - 1; // Maximum amount of splits
     var numSplits = gameServer.config.playerMaxCells - client.cells.length; // Get number of splits
-    numSplits = Math.min(numSplits,maxSplits);
-    var splitMass = Math.min(consumer.mass/(numSplits + 1), 36); // Maximum size of new splits
+    numSplits = Math.min(numSplits, maxSplits);
+    var splitMass = Math.min(consumer.mass / (numSplits + 1), 36); // Maximum size of new splits
 
     // Cell consumes mass before splitting
     consumer.addMass(this.mass);
@@ -96,18 +96,18 @@ Virus.prototype.onConsume = function(consumer,gameServer) {
     // Splitting
     var angle = 0; // Starting angle
     for (var k = 0; k < numSplits; k++) {
-        angle += 6/numSplits; // Get directions of splitting cells
-        gameServer.newCellVirused(client, consumer, angle, splitMass,150);
+        angle += 6 / numSplits; // Get directions of splitting cells
+        gameServer.newCellVirused(client, consumer, angle, splitMass, 150);
         consumer.mass -= splitMass;
     }
 
     for (var k = 0; k < bigSplits; k++) {
         angle = Math.random() * 6.28; // Random directions
         splitMass = consumer.mass / 4;
-        gameServer.newCellVirused(client, consumer, angle, splitMass,20);
+        gameServer.newCellVirused(client, consumer, angle, splitMass, 20);
         consumer.mass -= splitMass;
     }
-	
+
     // Prevent consumer cell from merging with other cells
     consumer.calcMergeTime(gameServer.config.playerRecombineTime);
 };
@@ -129,14 +129,11 @@ Virus.prototype.onRemove = function(gameServer) {
 
 // Random integer between a and b inclusive
 Virus.prototype.getVirusFeedAmount = function(gameServer) {
-    if(this.virusFeedAmount === null) {
+    if (this.virusFeedAmount === null) {
         this.virusFeedAmount = Math.floor(
-                gameServer.config.virusMinFeedAmount
-                + Math.random()*(
-                gameServer.config.virusMaxFeedAmount
-                - gameServer.config.virusMinFeedAmount
-                + 1
-                )
+            gameServer.config.virusMinFeedAmount + Math.random() * (
+                gameServer.config.virusMaxFeedAmount - gameServer.config.virusMinFeedAmount + 1
+            )
         );
     }
     return this.virusFeedAmount;
