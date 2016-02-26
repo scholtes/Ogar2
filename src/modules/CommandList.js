@@ -174,6 +174,7 @@ Commands.list = {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             console.log("[Console] Please specify a valid player ID!");
+            console.log("[Console] key : " + gameServer.juggernautID);
             return;
         }
 
