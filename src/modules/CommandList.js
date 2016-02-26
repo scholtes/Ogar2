@@ -39,8 +39,10 @@ Commands.list = {
         console.log("[Console] gamemode   : change server gamemode");
         console.log("[Console] juggernaut : set or view player's juggernautness");
         console.log("[Console] kick       : kick player or bot by client ID");
+        console.log("[Console] kickname   : kick all players matching name")
         console.log("[Console] kill       : kill cell(s) by client ID");
         console.log("[Console] killall    : kill everyone");
+        console.log("[Console] killname   : kill all players matching name");
         console.log("[Console] mass       : set cell(s) mass by client ID");
         console.log("[Console] name       : change cell(s) name by client ID");
         console.log("[Console] playerlist : get list of players and bots");
@@ -222,6 +224,32 @@ Commands.list = {
             }
         }
     },
+    kickname: function(gameServer,split) {
+        var name = split[1];
+        if (!name) {
+            console.log("[Console] Please specify a player name!");
+            return;
+        }
+        name = name.toLowerCase();
+
+        console.log("[Console] Removing players '" + name + "'");
+
+        var count = 0;
+        for (var i in gameServer.clients) {
+            var ithName = gameServer.clients[i].playerTracker.name.toLowerCase().replace(/\s/g, '');
+            if (ithName == name || (name == "-" && ithName == '')) {
+                var client = gameServer.clients[i].playerTracker;
+                var len = client.cells.length;
+                for (var j = 0; j < len; j++) {
+                    gameServer.removeNode(client.cells[0]);
+                }
+                client.socket.close();
+                count++;
+            }
+        }
+
+        console.log("[Console] Kicked " + count + " players");
+    },
     kill: function(gameServer,split) {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
@@ -252,6 +280,31 @@ Commands.list = {
             count++;
         }
         console.log("[Console] Removed " + count + " cells");
+    },
+    killname: function(gameServer,split) {
+        var name = split[1];
+        if (!name) {
+            console.log("[Console] Please specify a player name!");
+            return;
+        }
+        name = name.toLowerCase();
+
+        console.log("[Console] Removing players '" + name + "'");
+
+        var count = 0;
+        for (var i in gameServer.clients) {
+            var ithName = gameServer.clients[i].playerTracker.name.toLowerCase().replace(/\s/g, '');
+            if (ithName == name || (name == "-" && ithName == '')) {
+                var client = gameServer.clients[i].playerTracker;
+                var len = client.cells.length;
+                for (var j = 0; j < len; j++) {
+                    gameServer.removeNode(client.cells[0]);
+                }
+                count++;
+            }
+        }
+
+        console.log("[Console] Killed " + count + " players");
     },
     mass: function(gameServer,split) {
         // Validation checks
